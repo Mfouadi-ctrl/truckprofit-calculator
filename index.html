@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>TruckProfit - Load Calculator</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6fa;color:#172033;font-family:Arial,sans-serif}
+header{background:#101827;color:white;padding:25px 20px}
+header h1{margin:0;font-size:25px}
+header p{color:#bac5d5;margin:8px 0 0;font-size:14px}
+main{max-width:760px;margin:22px auto;padding:0 15px}
+.card{background:white;padding:20px;border-radius:14px;margin-bottom:16px;box-shadow:0 3px 14px #1522380d}
+h2{font-size:18px;margin:0 0 17px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-size:13px;font-weight:bold;margin-bottom:7px;color:#475569}
+input{width:100%;padding:13px;border:1px solid #d6deea;border-radius:8px;font-size:16px;background:#fff;color:#172033}
+input:focus{outline:2px solid #2563eb;border-color:transparent}
+button{border:0;border-radius:9px;padding:15px;font-size:15px;font-weight:bold;cursor:pointer}
+.calculate{width:100%;background:#1765d1;color:white;margin-top:20px}
+.reset{background:#e9eef6;color:#26364c;width:100%;margin-top:10px}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result{padding:15px;background:#f2f6fc;border-radius:10px}
+.result small{display:block;color:#64748b;font-size:12px;margin-bottom:8px}
+.result strong{font-size:21px;overflow-wrap:anywhere}
+.profit{background:#e7f8ee}
+.profit strong{color:#087b43}
+.loss{background:#fff0ed}
+.loss strong{color:#c0392b}
+.note{font-size:12px;color:#64748b;line-height:1.6}
+footer{text-align:center;color:#718096;font-size:12px;padding:20px}
+@media(max-width:450px){.grid,.results{grid-template-columns:1fr 1fr}.card{padding:16px}.result strong{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+<h1>TruckProfit</h1>
+<p>Know your numbers before accepting a load.</p>
+</header>
+<main>
+<section class="card">
+<h2>Load information</h2>
+<div class="grid">
+<div>
+<label for="pay">Load payment ($)</label>
+<input id="pay" type="number" min="0" step="0.01" value="2500">
+</div>
+<div>
+<label for="loaded">Loaded miles</label>
+<input id="loaded" type="number" min="0" step="1" value="800">
+</div>
+<div>
+<label for="deadhead">Deadhead miles</label>
+<input id="deadhead" type="number" min="0" step="1" value="100">
+</div>
+<div>
+<label for="fuelprice">Diesel price per gallon ($)</label>
+<input id="fuelprice" type="number" min="0" step="0.01" value="3.80">
+</div>
+<div>
+<label for="mpg">Truck fuel economy (MPG)</label>
+<input id="mpg" type="number" min="0.1" step="0.1" value="6.5">
+</div>
+<div>
+<label for="other">Other trip expenses ($)</label>
+<input id="other" type="number" min="0" step="0.01" value="150">
+</div>
+</div>
+<button class="calculate" onclick="calculate()">Calculate my profit</button>
+<button class="reset" onclick="resetForm()">Reset calculator</button>
+<p class="note">Enter your actual trip figures. Other expenses can include tolls, parking, permits and trip-related costs.</p>
+</section>
+
+<section class="card">
+<h2>Your load results</h2>
+<div class="results">
+<div class="result">
+<small>Total trip miles</small>
+<strong id="miles">900</strong>
+</div>
+<div class="result">
+<small>Rate per loaded mile</small>
+<strong id="loadedrate">$3.13</strong>
+</div>
+<div class="result">
+<small>Rate per total mile</small>
+<strong id="totalrate">$2.78</strong>
+</div>
+<div class="result">
+<small>Estimated fuel cost</small>
+<strong id="fuel">$526.15</strong>
+</div>
+<div class="result">
+<small>Total expenses</small>
+<strong id="expenses">$676.15</strong>
+</div>
+<div class="result profit" id="profitbox">
+<small>Estimated net profit</small>
+<strong id="profit">$1,823.85</strong>
+</div>
+</div>
+<p class="note" id="margin">Estimated profit margin: 72.95%</p>
+<p class="note">This estimate deducts fuel and the other expenses entered. It does not automatically include truck payments, insurance, taxes, maintenance reserves or driver wages unless you enter them in other expenses.</p>
+</section>
+</main>
+<footer>TruckProfit Calculator · Independent trucking decision tool</footer>
+<script>
+function money(n){
+ return n.toLocaleString("en-US",{style:"currency",currency:"USD"});
+}
+function calculate(){
+ const pay=Number(document.getElementById("pay").value);
+ const loaded=Number(document.getElementById("loaded").value);
+ const dead=Number(document.getElementById("deadhead").value);
+ const price=Number(document.getElementById("fuelprice").value);
+ const mpg=Number(document.getElementById("mpg").value);
+ const other=Number(document.getElementById("other").value);
+ const values=[pay,loaded,dead,price,mpg,other];
+ if(values.some(v=>!Number.isFinite(v)||v<0)||mpg<=0||loaded+dead<=0){
+  alert("Enter valid numbers. Miles must total more than zero and MPG must be above zero.");
+  return;
+ }
+ const miles=loaded+dead;
+ const fuelCost=(miles/mpg)*price;
+ const expenses=fuelCost+other;
+ const profit=pay-expenses;
+ const margin=pay>0?(profit/pay)*100:0;
+ document.getElementById("miles").textContent=miles.toLocaleString("en-US");
+ document.getElementById("loadedrate").textContent=money(loaded?pay/loaded:0);
+ document.getElementById("totalrate").textContent=money(pay/miles);
+ document.getElementById("fuel").textContent=money(fuelCost);
+ document.getElementById("expenses").textContent=money(expenses);
+ document.getElementById("profit").textContent=money(profit);
+ document.getElementById("margin").textContent="Estimated profit margin: "+margin.toFixed(2)+"%";
+ const box=document.getElementById("profitbox");
+ box.className=profit>=0?"result profit":"result loss";
+}
+function resetForm(){
+ document.getElementById("pay").value=2500;
+ document.getElementById("loaded").value=800;
+ document.getElementById("deadhead").value=100;
+ document.getElementById("fuelprice").value=3.80;
+ document.getElementById("mpg").value=6.5;
+ document.getElementById("other").value=150;
+ calculate();
+}
+calculate();
+</script>
+</body>
+  </html>
+  
