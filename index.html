@@ -188,7 +188,7 @@ localStorage.setItem('truckprofitLoads',JSON.stringify(list));renderSaved();
 }
 $('calculate').addEventListener('click',calculate);
 $('save').addEventListener('click',()=>{
-if(!current)calculate();if(!current)return;
+calculate();if(!current)return;
 const a=getSaved();a.unshift(current);
 localStorage.setItem('truckprofitLoads',JSON.stringify(a.slice(0,50)));
 renderSaved();$('save').textContent='Saved!';
