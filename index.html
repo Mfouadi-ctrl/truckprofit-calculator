@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1424">
-<title>TruckProfit 3.1</title>
+<title>TruckProfit 3.2</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f3f6fb;color:#172338;font-family:Arial,sans-serif}
@@ -66,9 +66,10 @@ th{color:#64748b;font-size:11px}
 @media print{.form-card,.saved-card,.actions,.topline{display:none!important}.layout{display:block}.result-card{background:white;color:black;border:1px solid #ddd}.result-card h2,.metric strong,.break-row strong{color:black}.metric{background:#f5f6f8}.metric span,.break-row,.result-note{color:#444}}
 </style>
 <script data-goatcounter="https://truckprofit.goatcounter.com/count"
-        async src="https://gc.zgo.at/count.js"></script> </head>
+async src="https://gc.zgo.at/count.js"></script>
+</head>
 <body>
-<header><div class="inner"><div class="brand"><div class="mark">TP</div><div><h1>TruckProfit 3.1</h1><p>Know your numbers. Negotiate with confidence.</p></div></div></div></header>
+<header><div class="inner"><div class="brand"><div class="mark">TP</div><div><h1>TruckProfit 3.2</h1><p>Know your numbers. Negotiate with confidence.</p></div></div></div></header>
 <main>
 <div class="topline"><span class="eyebrow">OWNER-OPERATOR LOAD ANALYZER</span><span class="status">Free calculator</span></div>
 <div class="layout">
@@ -130,21 +131,34 @@ th{color:#64748b;font-size:11px}
 <h2>Help us improve TruckProfit</h2>
 <p class="hint">Tell us what works, what needs fixing, and what features you'd like to see.</p>
 <a href="https://docs.google.com/forms/d/e/1FAIpQLSd5TmroP35RTowLteBldEabIOSqc2kPcSZdboIeifgR-z_Fag/viewform" target="_blank" rel="noopener noreferrer" class="btn primary" style="display:block;text-align:center;text-decoration:none">Share your feedback</a>
-</section> <div class="footnote">TruckProfit 3.1 · Built for clearer load decisions · Estimates are not financial or tax advice.</div>
+</section>
+<div class="footnote">TruckProfit 3.2 · Built for clearer load decisions · Estimates are not financial or tax advice.</div>
 <script>
 const $=id=>document.getElementById(id);
 let current=null;
 const val=id=>Number($(id).value);
 const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n);
+
 function calculate(){
 $('error').classList.remove('show');
 current=null;
+
 const payment=val('payment'),loaded=val('loaded'),deadhead=val('deadhead'),fuel=val('fuel'),mpg=val('mpg'),fixed=val('fixed'),other=val('other'),dispatch=val('dispatch')/100,factoring=val('factoring')/100,target=val('target'),marginTarget=val('marginTarget')/100;
+
 const fields=['payment','loaded','deadhead','fuel','mpg','fixed','other','dispatch','factoring','target','marginTarget'];
+
 if(fields.some(id=>!Number.isFinite(val(id))||val(id)<0)||loaded<=0||mpg<=0||dispatch>1||factoring>1||dispatch+factoring>=1||marginTarget>1){
 $('error').textContent='Check your entries: values must be valid and non-negative; loaded miles and MPG must be above zero; combined fees must be below 100%.';
-$('error').classList.add('show');return;
+$('error').classList.add('show');
+return;
 }
+
+if(marginTarget>=1-dispatch-factoring){
+$('error').textContent='Your profit margin target is too high for the dispatch and factoring fees. Lower the margin target below '+((1-dispatch-factoring)*100).toFixed(1)+'%.';
+$('error').classList.add('show');
+return;
+}
+
 const miles=loaded+deadhead;
 const fuelCost=miles/mpg*fuel;
 const fixedCost=miles*fixed;
@@ -154,11 +168,27 @@ const profit=payment-costs;
 const ppm=profit/miles;
 const margin=payment>0?profit/payment:0;
 const breakEven=(fuelCost+fixedCost+other)/(loaded*(1-dispatch-factoring));
-const targetRate=(fuelCost+fixedCost+other+target*miles)/(loaded*(1-dispatch-factoring));
+
+const baseCosts=fuelCost+fixedCost+other;
+const rateForProfit=(baseCosts+target*miles)/(loaded*(1-dispatch-factoring));
+const rateForMargin=baseCosts/(loaded*(1-dispatch-factoring-marginTarget));
+const targetRate=Math.max(rateForProfit,rateForMargin);
+
 let verdict,cls,detail;
-if(profit<0){verdict='REJECT — estimated loss';cls='reject';detail='The offer does not cover the estimated trip costs and fees.'}
-else if(ppm<target||margin<marginTarget){verdict='NEGOTIATE — below your targets';cls='negotiate';detail='Try for at least '+money(targetRate)+' per loaded mile to meet your profit-per-mile target.'}
-else{verdict='TAKE — meets your targets';cls='take';detail='The estimate meets the targets you entered. Confirm all load details before accepting.'}
+if(profit<0){
+verdict='REJECT — estimated loss';
+cls='reject';
+detail='The offer does not cover the estimated trip costs and fees.';
+}else if(ppm<target||margin<marginTarget){
+verdict='NEGOTIATE — below your targets';
+cls='negotiate';
+detail='Try for at least '+money(targetRate)+' per loaded mile to meet both your profit-per-mile and profit-margin targets.';
+}else{
+verdict='TAKE — meets your targets';
+cls='take';
+detail='The estimate meets the targets you entered. Confirm all load details before accepting.';
+}
+
 $('profit').textContent=money(profit);
 $('ppm').textContent=money(ppm);
 $('margin').textContent=(margin*100).toFixed(1)+'%';
@@ -173,42 +203,72 @@ $('targetRate').textContent=money(targetRate);
 $('decision').className='decision '+cls;
 $('decision').textContent=verdict;
 $('explain').textContent=detail+' Fuel, fixed costs, other trip costs, dispatch and factoring are included.';
+
 current={name:$('name').value.trim()||'Unnamed load',payment,loaded,deadhead,totalMiles:miles,fuelCost,fixedCost,other,fees,profit,ppm,margin:margin*100,breakEven,targetRate,verdict:verdict.split(' —')[0]};
 }
-function getSaved(){try{return JSON.parse(localStorage.getItem('truckprofitLoads')||'[]')}catch(e){return[]}}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function getSaved(){
+try{return JSON.parse(localStorage.getItem('truckprofitLoads')||'[]')}
+catch(e){return[]}
+}
+
+function esc(s){
+return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+
 function renderSaved(){
 const a=getSaved();
-if(!a.length){$('savedWrap').innerHTML='<p class="empty">No saved loads yet.</p>';return}
+if(!a.length){
+$('savedWrap').innerHTML='<p class="empty">No saved loads yet.</p>';
+return;
+}
 $('savedWrap').innerHTML='<table><thead><tr><th>Load</th><th>Payment</th><th>Profit</th><th>$/mile</th><th>Decision</th><th>Action</th></tr></thead><tbody>'+a.map((x,i)=>'<tr><td>'+esc(x.name)+'</td><td>'+money(x.payment)+'</td><td>'+money(x.profit)+'</td><td>'+money(x.ppm)+'</td><td>'+esc(x.verdict)+'</td><td><button class="btn danger" data-del="'+i+'" style="padding:7px 10px">Delete</button></td></tr>').join('')+'</tbody></table>';
+
 document.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{
-const list=getSaved();list.splice(Number(b.dataset.del),1);
-localStorage.setItem('truckprofitLoads',JSON.stringify(list));renderSaved();
+const list=getSaved();
+list.splice(Number(b.dataset.del),1);
+localStorage.setItem('truckprofitLoads',JSON.stringify(list));
+renderSaved();
 }));
 }
+
 $('calculate').addEventListener('click',calculate);
+
 $('save').addEventListener('click',()=>{
-calculate();if(!current)return;
-const a=getSaved();a.unshift(current);
+calculate();
+if(!current)return;
+const a=getSaved();
+a.unshift(current);
 localStorage.setItem('truckprofitLoads',JSON.stringify(a.slice(0,50)));
-renderSaved();$('save').textContent='Saved!';
+renderSaved();
+$('save').textContent='Saved!';
 setTimeout(()=>$('save').textContent='Save load',1200);
 });
+
 $('print').addEventListener('click',()=>window.print());
+
 $('clear').addEventListener('click',()=>{
 if(confirm('Delete all saved loads from this browser?')){
-localStorage.removeItem('truckprofitLoads');renderSaved();
-}});
+localStorage.removeItem('truckprofitLoads');
+renderSaved();
+}
+});
+
 $('csv').addEventListener('click',()=>{
-const a=getSaved();if(!a.length){alert('Save a load first.');return}
+const a=getSaved();
+if(!a.length){alert('Save a load first.');return}
 const cols=['name','payment','loaded','deadhead','totalMiles','fuelCost','fixedCost','other','fees','profit','ppm','margin','breakEven','targetRate','verdict'];
 const rows=[cols.join(','),...a.map(x=>cols.map(k=>'"'+String(x[k]??'').replace(/"/g,'""')+'"').join(','))];
 const blob=new Blob([rows.join('\n')],{type:'text/csv'});
 const url=URL.createObjectURL(blob),link=document.createElement('a');
-link.href=url;link.download='truckprofit-loads.csv';link.click();URL.revokeObjectURL(url);
+link.href=url;
+link.download='truckprofit-loads.csv';
+link.click();
+URL.revokeObjectURL(url);
 });
-calculate();renderSaved();
+
+calculate();
+renderSaved();
 </script>
 </body>
-                                            </html>
- 
+</html>
