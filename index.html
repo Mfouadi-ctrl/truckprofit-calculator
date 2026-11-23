@@ -4,194 +4,106 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1424">
-<title>TruckProfit 3.4</title>
+<meta name="theme-color" content="#ffffff">
+<title>TruckProfit 3.5</title>
 <style>
 *{box-sizing:border-box}
-
-html{min-height:100%;background:#0b1424}
-
+html{min-height:100%;background:#fff}
 body{
 margin:0;
 min-height:100vh;
-background:#0b1424 url('truckprofit-american-header.jpg') center center/cover fixed no-repeat;
+background:#fff url('truckprofit-american-header.jpg') center center/cover fixed no-repeat;
 color:#172338;
 font-family:Arial,sans-serif;
 position:relative;
 isolation:isolate;
 }
-
 body::before{
 content:"";
 position:fixed;
 inset:0;
 z-index:-1;
-background:linear-gradient(
-135deg,
-rgba(5,13,27,.62),
-rgba(5,15,31,.42),
-rgba(5,13,27,.68)
-);
+background:rgba(255,255,255,.80);
 pointer-events:none;
 }
-
 header{
 background:transparent;
-color:white;
+color:#172338;
 padding:30px 18px 24px;
 min-height:125px;
 display:flex;
 align-items:center;
 }
-
 .inner,main{max-width:980px;margin:auto}
-
 .brand{display:flex;align-items:center;gap:12px}
-.mark{background:#2563eb;padding:12px;border-radius:12px;font-weight:bold}
+.mark{background:#2563eb;padding:12px;border-radius:12px;font-weight:bold;color:white}
 h1{font-size:24px;margin:0}
-header p{color:#e1e9f5;font-size:14px;margin:8px 0 0}
-
+header p{color:#526176;font-size:14px;margin:8px 0 0}
 main{padding:12px 14px 30px}
-
-.topline{
-display:flex;
-justify-content:space-between;
-margin-bottom:14px;
-gap:10px;
-color:white;
-}
-
-.eyebrow{font-size:11px;font-weight:bold;letter-spacing:1px;color:#f1f5f9}
-.status{font-size:12px;background:rgba(255,255,255,.90);padding:7px 10px;border-radius:20px;color:#172338}
-
-.layout{
-display:grid;
-grid-template-columns:1.15fr .85fr;
-gap:16px;
-align-items:start;
-}
-
+.topline{display:flex;justify-content:space-between;margin-bottom:14px;gap:10px;color:#172338}
+.eyebrow{font-size:11px;font-weight:bold;letter-spacing:1px;color:#43536b}
+.status{font-size:12px;background:rgba(255,255,255,.9);padding:7px 10px;border-radius:20px;color:#172338;border:1px solid #e5eaf0}
+.layout{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;align-items:start}
 .card{
-background:rgba(255,255,255,.94);
-backdrop-filter:blur(7px);
--webkit-backdrop-filter:blur(7px);
-border:1px solid rgba(255,255,255,.55);
+background:rgba(255,255,255,.91);
+backdrop-filter:blur(5px);
+-webkit-backdrop-filter:blur(5px);
+border:1px solid rgba(255,255,255,.9);
 border-radius:16px;
 padding:19px;
 margin-bottom:16px;
-box-shadow:0 5px 22px rgba(0,0,0,.18);
+box-shadow:0 5px 22px rgba(30,45,65,.08);
 }
-
 .card h2{font-size:17px;margin:0 0 5px}
 .hint{font-size:12px;color:#68778d;line-height:1.5;margin:0 0 17px}
-
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
-
-.field label{
-display:block;
-font-size:12px;
-font-weight:bold;
-color:#43536b;
-margin-bottom:6px;
-}
-
-.field input{
-width:100%;
-border:1px solid #d6deea;
-border-radius:9px;
-padding:12px;
-font-size:15px;
-background:white;
-color:#172338;
-}
-
+.field label{display:block;font-size:12px;font-weight:bold;color:#43536b;margin-bottom:6px}
+.field input{width:100%;border:1px solid #d6deea;border-radius:9px;padding:12px;font-size:15px;background:rgba(255,255,255,.96);color:#172338}
 .field input:focus{outline:3px solid #dbeafe;border-color:#4b83ed}
-
 .full,.section-label{grid-column:1/-1}
-.section-label{
-font-size:11px;
-font-weight:bold;
-letter-spacing:1px;
-color:#8090a5;
-border-bottom:1px solid #edf1f6;
-padding:7px 0 5px;
-}
-
-.btn{
-border:0;
-border-radius:10px;
-padding:12px 15px;
-font-size:13px;
-font-weight:bold;
-cursor:pointer;
-}
-
+.section-label{font-size:11px;font-weight:bold;letter-spacing:1px;color:#8090a5;border-bottom:1px solid #edf1f6;padding:7px 0 5px}
+.btn{border:0;border-radius:10px;padding:12px 15px;font-size:13px;font-weight:bold;cursor:pointer}
 .primary{background:#2563eb;color:white;width:100%;margin-top:17px}
 .soft{background:#edf2f8;color:#34445c}
 .outline{background:white;border:1px solid #d8e0eb;color:#34445c}
 .danger{background:#fff0ef;color:#a52a22}
-
 .result-card{
-background:rgba(16,30,51,.96);
-color:white;
-border:1px solid rgba(255,255,255,.15);
+background:rgba(255,255,255,.93);
+color:#172338;
+border:1px solid rgba(255,255,255,.95);
 }
-
-.result-card h2{color:white}
-.result-card .hint{color:#aebed2}
-
+.result-card h2{color:#172338}
+.result-card .hint{color:#68778d}
 .decision{padding:14px;border-radius:11px;margin:14px 0;font-size:14px;font-weight:bold}
 .take{background:#dcfce7;color:#166534}
 .negotiate{background:#fef3c7;color:#854d0e}
 .reject{background:#fee2e2;color:#991b1b}
-
 .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-
-.metric{
-background:rgba(26,43,67,.95);
-border:1px solid #2a3b54;
-border-radius:11px;
-padding:12px;
-}
-
-.metric span{display:block;color:#aebed2;font-size:11px;margin-bottom:6px}
-.metric strong{display:block;color:white;font-size:19px;overflow-wrap:anywhere}
-.featured{background:#1b3760}
+.metric{background:rgba(245,248,252,.96);border:1px solid #e5eaf0;border-radius:11px;padding:12px}
+.metric span{display:block;color:#68778d;font-size:11px;margin-bottom:6px}
+.metric strong{display:block;color:#172338;font-size:19px;overflow-wrap:anywhere}
+.featured{background:rgba(231,239,250,.97)}
 .featured strong{font-size:23px}
-
-.breakdown{margin-top:15px;border-top:1px solid #2a3b54;padding-top:12px}
-.break-row{display:flex;justify-content:space-between;padding:6px 0;color:#bdc9d9;font-size:12px}
-.break-row strong{color:white}
-.result-note{color:#aebed2;font-size:11px;line-height:1.5;margin-top:12px}
-
+.breakdown{margin-top:15px;border-top:1px solid #e5eaf0;padding-top:12px}
+.break-row{display:flex;justify-content:space-between;padding:6px 0;color:#536176;font-size:12px}
+.break-row strong{color:#172338}
+.result-note{color:#68778d;font-size:11px;line-height:1.5;margin-top:12px}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .actions .btn{flex:1}
-
 table{border-collapse:collapse;width:100%;font-size:12px;min-width:540px}
 th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #edf1f6;white-space:nowrap}
 th{color:#64748b;font-size:11px}
 .tablewrap{overflow-x:auto}
 .empty{font-size:13px;color:#68778d;padding:12px 0}
-
 .error{display:none;color:#b42318;background:#fff0ef;padding:10px;border-radius:9px;font-size:12px;margin-top:12px}
 .error.show{display:block}
-
-.footnote{text-align:center;color:white;font-size:11px;padding:10px 14px 25px;text-shadow:0 1px 4px #000}
-
-body>section.card{
-max-width:952px;
-margin:0 auto 16px;
-}
-
+.footnote{text-align:center;color:#526176;font-size:11px;padding:10px 14px 25px}
+body>section.card{max-width:952px;margin:0 auto 16px}
 @media(max-width:720px){
-body{
-background-attachment:scroll;
-background-position:center center;
-}
+body{background-attachment:scroll;background-position:center center}
 .layout{grid-template-columns:1fr}
 header{min-height:105px;padding:24px 15px 18px}
 }
-
 @media(max-width:440px){
 .card{padding:16px}
 .grid{gap:11px}
@@ -201,7 +113,6 @@ h1{font-size:22px}
 main{padding:10px 11px 25px}
 body>section.card{margin-left:11px;margin-right:11px}
 }
-
 @media print{
 body{background:white!important}
 body::before{display:none}
@@ -214,150 +125,63 @@ header,.footnote{color:black}
 .metric span,.break-row,.result-note{color:#444}
 }
 </style>
-
 <script data-goatcounter="https://truckprofit.goatcounter.com/count"
 async src="https://gc.zgo.at/count.js"></script>
 </head>
-
 <body>
-
 <header>
 <div class="inner">
 <div class="brand">
 <div class="mark">TP</div>
 <div>
-<h1>TruckProfit 3.4</h1>
+<h1>TruckProfit 3.5</h1>
 <p>Know your numbers. Negotiate with confidence.</p>
 </div>
 </div>
 </div>
 </header>
-
 <main>
 <div class="topline">
 <span class="eyebrow">OWNER-OPERATOR LOAD ANALYZER</span>
 <span class="status">Free calculator</span>
 </div>
-
 <div class="layout">
-
 <section class="card form-card">
 <h2>Load details</h2>
 <p class="hint">Enter the broker's offer and your estimated operating costs.</p>
-
 <div class="grid">
 <div class="section-label">The load</div>
-
-<div class="field full">
-<label for="name">Load / route (optional)</label>
-<input id="name" placeholder="e.g. Dallas, TX to Atlanta, GA">
-</div>
-
-<div class="field">
-<label for="payment">Load payment ($)</label>
-<input id="payment" type="number" min="0" step=".01" value="2500">
-</div>
-
-<div class="field">
-<label for="loaded">Loaded miles</label>
-<input id="loaded" type="number" min="0" value="800">
-</div>
-
-<div class="field">
-<label for="deadhead">Deadhead miles</label>
-<input id="deadhead" type="number" min="0" value="100">
-</div>
-
+<div class="field full"><label for="name">Load / route (optional)</label><input id="name" placeholder="e.g. Dallas, TX to Atlanta, GA"></div>
+<div class="field"><label for="payment">Load payment ($)</label><input id="payment" type="number" min="0" step=".01" value="2500"></div>
+<div class="field"><label for="loaded">Loaded miles</label><input id="loaded" type="number" min="0" value="800"></div>
+<div class="field"><label for="deadhead">Deadhead miles</label><input id="deadhead" type="number" min="0" value="100"></div>
 <div class="section-label">Operating costs</div>
-
-<div class="field">
-<label for="fuel">Diesel price ($/gal)</label>
-<input id="fuel" type="number" min="0" step=".01" value="3.80">
-</div>
-
-<div class="field">
-<label for="mpg">Fuel economy (MPG)</label>
-<input id="mpg" type="number" min=".1" step=".1" value="6.5">
-</div>
-
-<div class="field">
-<label for="fixed">Fixed cost ($/mile)</label>
-<input id="fixed" type="number" min="0" step=".01" value=".65">
-</div>
-
-<div class="field">
-<label for="other">Other trip costs ($)</label>
-<input id="other" type="number" min="0" step=".01" value="150">
-</div>
-
+<div class="field"><label for="fuel">Diesel price ($/gal)</label><input id="fuel" type="number" min="0" step=".01" value="3.80"></div>
+<div class="field"><label for="mpg">Fuel economy (MPG)</label><input id="mpg" type="number" min=".1" step=".1" value="6.5"></div>
+<div class="field"><label for="fixed">Fixed cost ($/mile)</label><input id="fixed" type="number" min="0" step=".01" value=".65"></div>
+<div class="field"><label for="other">Other trip costs ($)</label><input id="other" type="number" min="0" step=".01" value="150"></div>
 <div class="section-label">Fees and targets</div>
-
-<div class="field">
-<label for="dispatch">Dispatch fee (%)</label>
-<input id="dispatch" type="number" min="0" max="100" step=".1" value="5">
+<div class="field"><label for="dispatch">Dispatch fee (%)</label><input id="dispatch" type="number" min="0" max="100" step=".1" value="5"></div>
+<div class="field"><label for="factoring">Factoring fee (%)</label><input id="factoring" type="number" min="0" max="100" step=".1" value="3"></div>
+<div class="field"><label for="target">Profit target ($/total mile)</label><input id="target" type="number" min="0" step=".01" value=".50"></div>
+<div class="field"><label for="marginTarget">Profit margin target (%)</label><input id="marginTarget" type="number" min="0" max="100" value="15"></div>
 </div>
-
-<div class="field">
-<label for="factoring">Factoring fee (%)</label>
-<input id="factoring" type="number" min="0" max="100" step=".1" value="3">
-</div>
-
-<div class="field">
-<label for="target">Profit target ($/total mile)</label>
-<input id="target" type="number" min="0" step=".01" value=".50">
-</div>
-
-<div class="field">
-<label for="marginTarget">Profit margin target (%)</label>
-<input id="marginTarget" type="number" min="0" max="100" value="15">
-</div>
-</div>
-
 <div id="error" class="error" role="alert"></div>
-
 <button class="btn primary" id="calculate">Calculate my load</button>
-
 <p class="hint" style="margin-top:12px">Fixed cost per mile can include truck payment, insurance and maintenance reserves. Do not count an expense twice.</p>
 </section>
-
 <section class="card result-card">
 <h2>Your load decision</h2>
 <p class="hint">Your estimate updates when you calculate.</p>
-
 <div id="decision" class="decision negotiate">Enter your load details and calculate.</div>
-
 <div class="metrics">
-<div class="metric featured">
-<span>Estimated net profit</span>
-<strong id="profit">$—</strong>
+<div class="metric featured"><span>Estimated net profit</span><strong id="profit">$—</strong></div>
+<div class="metric"><span>Profit per total mile</span><strong id="ppm">$—</strong></div>
+<div class="metric"><span>Profit margin</span><strong id="margin">—</strong></div>
+<div class="metric"><span>Break-even rate / loaded mile</span><strong id="breakEven">$—</strong></div>
+<div class="metric"><span>Total trip miles</span><strong id="totalMiles">—</strong></div>
+<div class="metric"><span>Estimated fuel cost</span><strong id="fuelCost">$—</strong></div>
 </div>
-
-<div class="metric">
-<span>Profit per total mile</span>
-<strong id="ppm">$—</strong>
-</div>
-
-<div class="metric">
-<span>Profit margin</span>
-<strong id="margin">—</strong>
-</div>
-
-<div class="metric">
-<span>Break-even rate / loaded mile</span>
-<strong id="breakEven">$—</strong>
-</div>
-
-<div class="metric">
-<span>Total trip miles</span>
-<strong id="totalMiles">—</strong>
-</div>
-
-<div class="metric">
-<span>Estimated fuel cost</span>
-<strong id="fuelCost">$—</strong>
-</div>
-</div>
-
 <div class="breakdown">
 <div class="break-row"><span>Fuel</span><strong id="bFuel">$—</strong></div>
 <div class="break-row"><span>Fixed operating costs</span><strong id="bFixed">$—</strong></div>
@@ -365,76 +189,50 @@ async src="https://gc.zgo.at/count.js"></script>
 <div class="break-row"><span>Dispatch + factoring</span><strong id="bFees">$—</strong></div>
 <div class="break-row"><span>Target rate to negotiate</span><strong id="targetRate">$—</strong></div>
 </div>
-
 <p class="result-note" id="explain">Estimates only. Verify the route, appointments, broker credit and accessorial charges before booking.</p>
-
 <div class="actions">
 <button class="btn soft" id="save">Save load</button>
 <button class="btn outline" id="print">Print / PDF</button>
 </div>
 </section>
 </div>
-
 <section class="card saved-card">
 <h2>Saved load comparison</h2>
 <p class="hint">Saved loads stay in this browser on this device.</p>
-
 <div class="actions" style="margin:0 0 12px">
 <button class="btn soft" id="csv">Export CSV</button>
 <button class="btn danger" id="clear">Clear saved loads</button>
 </div>
-
-<div class="tablewrap" id="savedWrap">
-<p class="empty">No saved loads yet.</p>
-</div>
+<div class="tablewrap" id="savedWrap"><p class="empty">No saved loads yet.</p></div>
 </section>
 </main>
-
 <section class="card">
 <h2>Help us improve TruckProfit</h2>
 <p class="hint">Tell us what works, what needs fixing, and what features you'd like to see.</p>
 <a href="https://docs.google.com/forms/d/e/1FAIpQLSd5TmroP35RTowLteBldEabIOSqc2kPcSZdboIeifgR-z_Fag/viewform" target="_blank" rel="noopener noreferrer" class="btn primary" style="display:block;text-align:center;text-decoration:none">Share your feedback</a>
 </section>
-
-<div class="footnote">TruckProfit 3.4 · Built for clearer load decisions · Estimates are not financial or tax advice.</div>
-
+<div class="footnote">TruckProfit 3.5 · Built for clearer load decisions · Estimates are not financial or tax advice.</div>
 <script>
 const $=id=>document.getElementById(id);
 let current=null;
-
 const val=id=>Number($(id).value);
 const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n);
 
 function calculate(){
 $('error').classList.remove('show');
 current=null;
-
-const payment=val('payment'),
-loaded=val('loaded'),
-deadhead=val('deadhead'),
-fuel=val('fuel'),
-mpg=val('mpg'),
-fixed=val('fixed'),
-other=val('other'),
-dispatch=val('dispatch')/100,
-factoring=val('factoring')/100,
-target=val('target'),
-marginTarget=val('marginTarget')/100;
-
+const payment=val('payment'),loaded=val('loaded'),deadhead=val('deadhead'),fuel=val('fuel'),mpg=val('mpg'),fixed=val('fixed'),other=val('other'),dispatch=val('dispatch')/100,factoring=val('factoring')/100,target=val('target'),marginTarget=val('marginTarget')/100;
 const fields=['payment','loaded','deadhead','fuel','mpg','fixed','other','dispatch','factoring','target','marginTarget'];
-
 if(fields.some(id=>!Number.isFinite(val(id))||val(id)<0)||loaded<=0||mpg<=0||dispatch>1||factoring>1||dispatch+factoring>=1||marginTarget>1){
 $('error').textContent='Check your entries: values must be valid and non-negative; loaded miles and MPG must be above zero; combined fees must be below 100%.';
 $('error').classList.add('show');
 return;
 }
-
 if(marginTarget>=1-dispatch-factoring){
 $('error').textContent='Your profit margin target is too high for the dispatch and factoring fees. Lower the margin target below '+((1-dispatch-factoring)*100).toFixed(1)+'%.';
 $('error').classList.add('show');
 return;
 }
-
 const miles=loaded+deadhead;
 const fuelCost=miles/mpg*fuel;
 const fixedCost=miles*fixed;
@@ -444,14 +242,11 @@ const profit=payment-costs;
 const ppm=profit/miles;
 const margin=payment>0?profit/payment:0;
 const breakEven=(fuelCost+fixedCost+other)/(loaded*(1-dispatch-factoring));
-
 const baseCosts=fuelCost+fixedCost+other;
 const rateForProfit=(baseCosts+target*miles)/(loaded*(1-dispatch-factoring));
 const rateForMargin=baseCosts/(loaded*(1-dispatch-factoring-marginTarget));
 const targetRate=Math.max(rateForProfit,rateForMargin);
-
 let verdict,cls,detail;
-
 if(profit<0){
 verdict='REJECT — estimated loss';
 cls='reject';
@@ -465,7 +260,6 @@ verdict='TAKE — meets your targets';
 cls='take';
 detail='The estimate meets the targets you entered. Confirm all load details before accepting.';
 }
-
 $('profit').textContent=money(profit);
 $('ppm').textContent=money(ppm);
 $('margin').textContent=(margin*100).toFixed(1)+'%';
@@ -480,45 +274,23 @@ $('targetRate').textContent=money(targetRate);
 $('decision').className='decision '+cls;
 $('decision').textContent=verdict;
 $('explain').textContent=detail+' Fuel, fixed costs, other trip costs, dispatch and factoring are included.';
-
-current={
-name:$('name').value.trim()||'Unnamed load',
-payment,
-loaded,
-deadhead,
-totalMiles:miles,
-fuelCost,
-fixedCost,
-other,
-fees,
-profit,
-ppm,
-margin:margin*100,
-breakEven,
-targetRate,
-verdict:verdict.split(' —')[0]
-};
+current={name:$('name').value.trim()||'Unnamed load',payment,loaded,deadhead,totalMiles:miles,fuelCost,fixedCost,other,fees,profit,ppm,margin:margin*100,breakEven,targetRate,verdict:verdict.split(' —')[0]};
 }
 
 function getSaved(){
 try{return JSON.parse(localStorage.getItem('truckprofitLoads')||'[]')}
 catch(e){return[]}
 }
-
 function esc(s){
 return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
 }
-
 function renderSaved(){
 const a=getSaved();
-
 if(!a.length){
 $('savedWrap').innerHTML='<p class="empty">No saved loads yet.</p>';
 return;
 }
-
 $('savedWrap').innerHTML='<table><thead><tr><th>Load</th><th>Payment</th><th>Profit</th><th>$/mile</th><th>Decision</th><th>Action</th></tr></thead><tbody>'+a.map((x,i)=>'<tr><td>'+esc(x.name)+'</td><td>'+money(x.payment)+'</td><td>'+money(x.profit)+'</td><td>'+money(x.ppm)+'</td><td>'+esc(x.verdict)+'</td><td><button class="btn danger" data-del="'+i+'" style="padding:7px 10px">Delete</button></td></tr>').join('')+'</tbody></table>';
-
 document.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{
 const list=getSaved();
 list.splice(Number(b.dataset.del),1);
@@ -526,9 +298,7 @@ localStorage.setItem('truckprofitLoads',JSON.stringify(list));
 renderSaved();
 }));
 }
-
 $('calculate').addEventListener('click',calculate);
-
 $('save').addEventListener('click',()=>{
 calculate();
 if(!current)return;
@@ -539,16 +309,13 @@ renderSaved();
 $('save').textContent='Saved!';
 setTimeout(()=>$('save').textContent='Save load',1200);
 });
-
 $('print').addEventListener('click',()=>window.print());
-
 $('clear').addEventListener('click',()=>{
 if(confirm('Delete all saved loads from this browser?')){
 localStorage.removeItem('truckprofitLoads');
 renderSaved();
 }
 });
-
 $('csv').addEventListener('click',()=>{
 const a=getSaved();
 if(!a.length){alert('Save a load first.');return}
@@ -561,7 +328,6 @@ link.download='truckprofit-loads.csv';
 link.click();
 URL.revokeObjectURL(url);
 });
-
 calculate();
 renderSaved();
 </script>
