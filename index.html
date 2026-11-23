@@ -5,16 +5,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1424">
-<title>TruckProfit 3.2</title>
+<title>TruckProfit 3.3</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f3f6fb;color:#172338;font-family:Arial,sans-serif}
-header{background:linear-gradient(125deg,#0b1424,#17365e);color:white;padding:25px 18px}
+header{
+background:linear-gradient(90deg,rgba(7,17,32,.88),rgba(11,29,53,.48)),url('truckprofit-american-header.jpg') center 48%/cover no-repeat;
+color:white;padding:34px 18px;min-height:190px;display:flex;align-items:center
+}
 .inner,main{max-width:980px;margin:auto}
 .brand{display:flex;align-items:center;gap:12px}
 .mark{background:#2563eb;padding:12px;border-radius:12px;font-weight:bold}
 h1{font-size:24px;margin:0}
-header p{color:#c4d2e5;font-size:14px;margin:8px 0 0}
+header p{color:#e1e9f5;font-size:14px;margin:8px 0 0}
 main{padding:20px 14px 30px}
 .topline{display:flex;justify-content:space-between;margin-bottom:14px;gap:10px}
 .eyebrow{font-size:11px;font-weight:bold;letter-spacing:1px;color:#61718a}
@@ -61,17 +64,47 @@ th{color:#64748b;font-size:11px}
 .error{display:none;color:#b42318;background:#fff0ef;padding:10px;border-radius:9px;font-size:12px;margin-top:12px}
 .error.show{display:block}
 .footnote{text-align:center;color:#718096;font-size:11px;padding:10px 14px 25px}
-@media(max-width:720px){.layout{grid-template-columns:1fr}}
-@media(max-width:440px){.card{padding:16px}.grid{gap:11px}.field input{padding:11px 9px}}
-@media print{.form-card,.saved-card,.actions,.topline{display:none!important}.layout{display:block}.result-card{background:white;color:black;border:1px solid #ddd}.result-card h2,.metric strong,.break-row strong{color:black}.metric{background:#f5f6f8}.metric span,.break-row,.result-note{color:#444}}
+@media(max-width:720px){
+.layout{grid-template-columns:1fr}
+header{min-height:170px;background-position:center}
+}
+@media(max-width:440px){
+.card{padding:16px}
+.grid{gap:11px}
+.field input{padding:11px 9px}
+header{padding:28px 15px;min-height:155px}
+}
+@media print{
+.form-card,.saved-card,.actions,.topline{display:none!important}
+.layout{display:block}
+.result-card{background:white;color:black;border:1px solid #ddd}
+.result-card h2,.metric strong,.break-row strong{color:black}
+.metric{background:#f5f6f8}
+.metric span,.break-row,.result-note{color:#444}
+}
 </style>
 <script data-goatcounter="https://truckprofit.goatcounter.com/count"
 async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
-<header><div class="inner"><div class="brand"><div class="mark">TP</div><div><h1>TruckProfit 3.2</h1><p>Know your numbers. Negotiate with confidence.</p></div></div></div></header>
+<header>
+<div class="inner">
+<div class="brand">
+<div class="mark">TP</div>
+<div>
+<h1>TruckProfit 3.3</h1>
+<p>Know your numbers. Negotiate with confidence.</p>
+</div>
+</div>
+</div>
+</header>
+
 <main>
-<div class="topline"><span class="eyebrow">OWNER-OPERATOR LOAD ANALYZER</span><span class="status">Free calculator</span></div>
+<div class="topline">
+<span class="eyebrow">OWNER-OPERATOR LOAD ANALYZER</span>
+<span class="status">Free calculator</span>
+</div>
+
 <div class="layout">
 <section class="card form-card">
 <h2>Load details</h2>
@@ -97,6 +130,7 @@ async src="https://gc.zgo.at/count.js"></script>
 <button class="btn primary" id="calculate">Calculate my load</button>
 <p class="hint" style="margin-top:12px">Fixed cost per mile can include truck payment, insurance and maintenance reserves. Do not count an expense twice.</p>
 </section>
+
 <section class="card result-card">
 <h2>Your load decision</h2>
 <p class="hint">Your estimate updates when you calculate.</p>
@@ -117,22 +151,32 @@ async src="https://gc.zgo.at/count.js"></script>
 <div class="break-row"><span>Target rate to negotiate</span><strong id="targetRate">$—</strong></div>
 </div>
 <p class="result-note" id="explain">Estimates only. Verify the route, appointments, broker credit and accessorial charges before booking.</p>
-<div class="actions"><button class="btn soft" id="save">Save load</button><button class="btn outline" id="print">Print / PDF</button></div>
+<div class="actions">
+<button class="btn soft" id="save">Save load</button>
+<button class="btn outline" id="print">Print / PDF</button>
+</div>
 </section>
 </div>
+
 <section class="card saved-card">
 <h2>Saved load comparison</h2>
 <p class="hint">Saved loads stay in this browser on this device.</p>
-<div class="actions" style="margin:0 0 12px"><button class="btn soft" id="csv">Export CSV</button><button class="btn danger" id="clear">Clear saved loads</button></div>
+<div class="actions" style="margin:0 0 12px">
+<button class="btn soft" id="csv">Export CSV</button>
+<button class="btn danger" id="clear">Clear saved loads</button>
+</div>
 <div class="tablewrap" id="savedWrap"><p class="empty">No saved loads yet.</p></div>
 </section>
 </main>
+
 <section class="card">
 <h2>Help us improve TruckProfit</h2>
 <p class="hint">Tell us what works, what needs fixing, and what features you'd like to see.</p>
 <a href="https://docs.google.com/forms/d/e/1FAIpQLSd5TmroP35RTowLteBldEabIOSqc2kPcSZdboIeifgR-z_Fag/viewform" target="_blank" rel="noopener noreferrer" class="btn primary" style="display:block;text-align:center;text-decoration:none">Share your feedback</a>
 </section>
-<div class="footnote">TruckProfit 3.2 · Built for clearer load decisions · Estimates are not financial or tax advice.</div>
+
+<div class="footnote">TruckProfit 3.3 · Built for clearer load decisions · Estimates are not financial or tax advice.</div>
+
 <script>
 const $=id=>document.getElementById(id);
 let current=null;
