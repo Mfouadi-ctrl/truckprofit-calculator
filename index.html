@@ -329,4 +329,275 @@ function calculate(){
   const feeRate=(read("dispatch")+read("factoring"))/100;
   const targetProfit=read("targetProfit"),targetMargin=read("targetMargin")/100;
 
-  const fuel=(miles/mpg)*fu
+  
+const fuel=(miles/mpg)*fuelPrice;
+  const fixed=miles*fixedRate;
+  const fees=payment*feeRate;
+  const expenses=fuel+fixed+other+fees;
+  const net=payment-expenses;
+  const perMile=net/miles;
+  const margin=(net/payment)*100;
+  const loadedRate=payment/loaded;
+  const totalRate=payment/miles;
+
+  const baseCosts=fuel+fixed+other;
+  const breakEven=baseCosts/((1-feeRate)*loaded);
+
+  const requiredForProfit=(baseCosts+(targetProfit*miles))/(1-feeRate);
+  const requiredForMargin=baseCosts/(1-feeRate-targetMargin);
+  const targetPayment=Math.max(requiredForProfit,requiredForMargin);
+  const minimumRate=targetPayment/loaded;
+  const counterRate=Math.ceil(minimumRate*100)/100;
+  const gap=Math.max(0,targetPayment-payment);
+  const targetProfitAtOffer=targetProfit*miles;
+
+  let decision="reject";
+  let title="REJECT OR RENEGOTIATE";
+  let message="This offer does not meet your configured profit targets.";
+
+  if(net>0&&payment>=targetPayment){
+    decision="take";
+    title="GOOD LOAD — MEETS YOUR TARGET";
+    message="This offer meets your configured profit-per-mile and profit-margin targets.";
+  }else if(net>0){
+    decision="negotiate";
+    title="NEGOTIATE BEFORE ACCEPTING";
+    message="The load is profitable, but it falls below your configured targets. Ask for a better rate.";
+  }
+
+  currentResult={
+    date:new Date().toISOString(),
+    broker:$("broker").value.trim(),
+    loadName:$("loadName").value.trim(),
+    notes:$("notes").value.trim(),
+    payment,loaded,deadhead,miles,
+    fuel,fixed,other,fees,expenses,net,
+    perMile,margin,loadedRate,totalRate,
+    breakEven,minimumRate,counterRate,gap,
+    targetProfitAtOffer,decision
+  };
+
+  $("netProfit").textContent=money(net);
+  $("netProfit").className="value "+(net>=0?"profit":"loss");
+  $("profitPerMile").textContent=money(perMile);
+  $("profitPerMile").className="value "+(perMile>=0?"profit":"loss");
+  $("profitMargin").textContent=margin.toFixed(2)+"%";
+  $("totalExpenses").textContent=money(expenses);
+  $("totalMiles").textContent=number(miles);
+  $("loadedRate").textContent=money(loadedRate);
+  $("totalRate").textContent=money(totalRate);
+  $("breakEven").textContent=money(breakEven);
+
+  $("fuelCost").textContent=money(fuel);
+  $("fixedTotal").textContent=money(fixed);
+  $("otherTotal").textContent=money(other);
+  $("feeTotal").textContent=money(fees);
+
+  $("minimumRate").textContent=money(minimumRate);
+  $("counterRate").textContent=money(counterRate);
+  $("rateGap").textContent=money(gap);
+  $("targetProfitAtOffer").textContent=money(targetProfitAtOffer);
+
+  $("decisionBox").className="decision "+decision;
+  $("decisionTitle").textContent=title;
+  $("decisionText").textContent=message;
+
+  $("negOffer").textContent=money(payment);
+  $("negCounter").textContent=money(counterRate);
+
+  const broker=$("broker").value.trim()||"there";
+  $("brokerMessage").value=
+    "Hello "+broker+", thank you for the offer. After reviewing the total mileage and operating costs for this load, I would need $"+
+    counterRate.toFixed(2)+" per loaded mile, or $"+
+    money(counterRate*loaded)+
+    " total, to make this trip work. Is there room to improve the rate? Thank you.";
+
+  $("resultsPanel").classList.remove("hidden");
+  $("negotiationPanel").classList.remove("hidden");
+  $("resultsPanel").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function resetLoad(){
+  ["broker","loadName","notes"].forEach(id=>$(id).value="");
+  $("payment").value="2500";
+  $("loadedMiles").value="800";
+  $("deadheadMiles").value="100";
+  $("otherCosts").value="150";
+  $("error").textContent="";
+  $("resultsPanel").classList.add("hidden");
+  $("negotiationPanel").classList.add("hidden");
+  currentResult=null;
+}
+
+function saveCurrentLoad(){
+  if(!currentResult){
+    alert("Calculate a load first.");
+    return;
+  }
+
+  const loads=getLoads();
+  const record={
+    id:"load_"+Date.now(),
+    ...currentResult,
+    profile:$("profileName").value.trim()||"My Truck"
+  };
+
+  loads.unshift(record);
+  if(writeStore(LOAD_KEY,loads)){
+    refreshSavedLoads();
+    alert("Load saved successfully.");
+  }
+}
+
+function refreshSavedLoads(){
+  const loads=getLoads();
+  const complete=loads.filter(isCompleteLoad);
+  const legacy=loads.length-complete.length;
+
+  $("savedCount").textContent=complete.length;
+
+  if(complete.length){
+    const best=complete.reduce((a,b)=>Number(a.net)>Number(b.net)?a:b);
+    const bestMile=complete.reduce((a,b)=>Number(a.perMile)>Number(b.perMile)?a:b);
+    const average=complete.reduce((sum,l)=>sum+Number(l.net),0)/complete.length;
+
+    $("bestProfit").textContent=money(best.net);
+    $("bestPerMile").textContent=money(bestMile.perMile);
+    $("averageProfit").textContent=money(average);
+  }else{
+    $("bestProfit").textContent="$0.00";
+    $("bestPerMile").textContent="$0.00";
+    $("averageProfit").textContent="$0.00";
+  }
+
+  $("legacyNotice").textContent=legacy
+    ?legacy+" older or incomplete record(s) are preserved but excluded from performance statistics."
+    :"";
+
+  $("savedTable").innerHTML=loads.map(l=>{
+    const completeRecord=isCompleteLoad(l);
+    const name=escapeHTML(l.loadName||l.broker||"Unnamed load");
+    const payment=Number.isFinite(Number(l.payment))?money(l.payment):"—";
+    const miles=Number.isFinite(Number(l.miles))?number(l.miles):"—";
+    const expenses=Number.isFinite(Number(l.expenses))?money(l.expenses):"—";
+    const net=completeRecord?money(l.net):"—";
+    const perMile=completeRecord?money(l.perMile):"—";
+    const status=completeRecord
+      ?'<span class="status-complete">Complete</span>'
+      :'<span class="status-legacy">Older record</span>';
+
+    return `<tr>
+      <td>${name}<br><small>${safeDate(l.date)}</small></td>
+      <td>${payment}</td>
+      <td>${miles}</td>
+      <td>${expenses}</td>
+      <td>${net}</td>
+      <td>${perMile}</td>
+      <td>${status}</td>
+      <td><div class="table-actions">
+      <button class="btn red" data-delete="${escapeHTML(l.id||"")}">Delete</button>
+      </div></td>
+    </tr>`;
+  }).join("");
+
+  $("emptySaved").classList.toggle("hidden",loads.length>0);
+}
+
+function deleteSavedLoad(id){
+  if(!confirm("Delete this saved load?"))return;
+  const updated=getLoads().filter(l=>String(l.id)!==String(id));
+  writeStore(LOAD_KEY,updated);
+  refreshSavedLoads();
+}
+
+function exportCSV(){
+  const loads=getLoads().filter(isCompleteLoad);
+  if(!loads.length){
+    alert("There are no complete saved loads to export.");
+    return;
+  }
+
+  const columns=[
+    "Date","Broker","Load","Payment","Loaded Miles","Deadhead Miles",
+    "Total Miles","Fuel","Fixed Cost","Other Costs","Fees",
+    "Total Expenses","Net Profit","Profit Per Mile","Profit Margin",
+    "Break Even Rate","Counteroffer","Decision"
+  ];
+
+  const rows=loads.map(l=>[
+    safeDate(l.date),l.broker,l.loadName,l.payment,l.loaded,l.deadhead,
+    l.miles,l.fuel,l.fixed,l.other,l.fees,l.expenses,l.net,
+    l.perMile,l.margin,l.breakEven,l.counterRate,l.decision
+  ]);
+
+  const csv=[columns,...rows].map(row=>
+    row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")
+  ).join("\r\n");
+
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;
+  link.download="TruckProfit-loads.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function copyBrokerMessage(){
+  const message=$("brokerMessage").value;
+  try{
+    await navigator.clipboard.writeText(message);
+    alert("Negotiation message copied.");
+  }catch(e){
+    $("brokerMessage").select();
+    const copied=document.execCommand("copy");
+    alert(copied?"Message copied.":"Please select and copy the message manually.");
+  }
+}
+
+function sendFeedback(){
+  const subject=encodeURIComponent("TruckProfit feedback");
+  const body=encodeURIComponent(
+    "Hello TruckProfit team,\n\nI would like to share the following feedback:\n\n"
+  );
+  window.location.href="mailto:?subject="+subject+"&body="+body;
+}
+
+function startApp(){
+  refreshProfiles();
+  refreshSavedLoads();
+
+  $("calculateBtn").addEventListener("click",calculate);
+  $("resetBtn").addEventListener("click",resetLoad);
+  $("saveProfileBtn").addEventListener("click",saveProfile);
+  $("loadProfileBtn").addEventListener("click",loadSelectedProfile);
+  $("newProfileBtn").addEventListener("click",newProfile);
+  $("deleteProfileBtn").addEventListener("click",deleteProfile);
+  $("saveLoadBtn").addEventListener("click",saveCurrentLoad);
+  $("printBtn").addEventListener("click",()=>window.print());
+  $("copyMessageBtn").addEventListener("click",copyBrokerMessage);
+  $("exportBtn").addEventListener("click",exportCSV);
+  $("refreshSavedBtn").addEventListener("click",refreshSavedLoads);
+  $("feedbackBtn").addEventListener("click",sendFeedback);
+
+  $("savedTable").addEventListener("click",event=>{
+    const button=event.target.closest("[data-delete]");
+    if(button)deleteSavedLoad(button.dataset.delete);
+  });
+
+  $("profileSelect").addEventListener("change",()=>{
+    const id=$("profileSelect").value;
+    if(id){
+      currentProfileId=id;
+    }
+  });
+}
+
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",startApp);
+}else{
+  startApp();
+}
+
