@@ -392,7 +392,7 @@ function calculate(){
   $("feeTotal").textContent=money(fees);
 
   $("minimumRate").textContent=money(minimumRate);
-  $("counterRate").textContent=payment>=targetPayment?"No counteroffer needed":money(counterRate);
+  $("counterRate").textContent=payment>=targetPayment?"ACCEPT OFFER":money(counterRate);
   $("rateGap").textContent=money(gap);
   $("targetProfitAtOffer").textContent=money(targetProfitAtOffer);
 
@@ -402,7 +402,7 @@ function calculate(){
 
   $("negOffer").textContent=money(payment);
   const meetsTarget=payment>=targetPayment;
-  $("negCounter").textContent=meetsTarget?"No counteroffer needed":money(counterRate);
+  $("negCounter").textContent=meetsTarget?"ACCEPT OFFER":money(counterRate);
 
   const broker=$("broker").value.trim()||"there";
   if(meetsTarget){
