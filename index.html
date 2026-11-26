@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -329,8 +328,7 @@ function calculate(){
   const feeRate=(read("dispatch")+read("factoring"))/100;
   const targetProfit=read("targetProfit"),targetMargin=read("targetMargin")/100;
 
-  
-const fuel=(miles/mpg)*fuelPrice;
+  const fuel=(miles/mpg)*fuelPrice;
   const fixed=miles*fixedRate;
   const fees=payment*feeRate;
   const expenses=fuel+fixed+other+fees;
@@ -394,7 +392,7 @@ const fuel=(miles/mpg)*fuelPrice;
   $("feeTotal").textContent=money(fees);
 
   $("minimumRate").textContent=money(minimumRate);
-  $("counterRate").textContent=money(counterRate);
+  $("counterRate").textContent=payment>=targetPayment?"No counteroffer needed":money(counterRate);
   $("rateGap").textContent=money(gap);
   $("targetProfitAtOffer").textContent=money(targetProfitAtOffer);
 
@@ -403,14 +401,27 @@ const fuel=(miles/mpg)*fuelPrice;
   $("decisionText").textContent=message;
 
   $("negOffer").textContent=money(payment);
-  $("negCounter").textContent=money(counterRate);
+  const meetsTarget=payment>=targetPayment;
+  $("negCounter").textContent=meetsTarget?"No counteroffer needed":money(counterRate);
 
   const broker=$("broker").value.trim()||"there";
-  $("brokerMessage").value=
-    "Hello "+broker+", thank you for the offer. After reviewing the total mileage and operating costs for this load, I would need $"+
-    counterRate.toFixed(2)+" per loaded mile, or $"+
-    money(counterRate*loaded)+
-    " total, to make this trip work. Is there room to improve the rate? Thank you.";
+  if(meetsTarget){
+    $("brokerMessage").value=
+      "Hello "+broker+", thank you for the offer. I reviewed the mileage and operating costs, and this load meets my configured profit targets. The offered rate is $"+
+      loadedRate.toFixed(2)+" per loaded mile. I can accept this rate. Thank you.";
+  }else if(net>0){
+    $("brokerMessage").value=
+      "Hello "+broker+", thank you for the offer. The load is profitable, but it is below my configured profit targets. I would need $"+
+      counterRate.toFixed(2)+" per loaded mile, or $"+
+      money(counterRate*loaded)+
+      " total, to meet those targets. Is there room to improve the rate? Thank you.";
+  }else{
+    $("brokerMessage").value=
+      "Hello "+broker+", thank you for the offer. Based on the estimated operating costs, this load would result in a loss at the current rate. I would need at least $"+
+      counterRate.toFixed(2)+" per loaded mile, or $"+
+      money(counterRate*loaded)+
+      " total, to meet my configured profit targets. If that rate is not possible, I would have to decline. Thank you.";
+  }
 
   $("resultsPanel").classList.remove("hidden");
   $("negotiationPanel").classList.remove("hidden");
